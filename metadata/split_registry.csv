@@ -1,0 +1,13 @@
+bearing_id,partition,condition,fault_location,operating_condition
+K001,development,healthy,none,N15_M07_F10
+K002,development,healthy,none,N15_M07_F10
+K003,development,healthy,none,N15_M07_F10
+KA04,development,damaged,outer_ring,N15_M07_F10
+KA16,development,damaged,outer_ring,N15_M07_F10
+KI04,development,damaged,inner_ring,N15_M07_F10
+KI16,development,damaged,inner_ring,N15_M07_F10
+K004,final_test,healthy,none,N15_M07_F10
+K005,final_test,healthy,none,N15_M07_F10
+KA22,final_test,damaged,outer_ring,N15_M07_F10
+KI18,final_test,damaged,inner_ring,N15_M07_F10
+KI21,final_test,damaged,inner_ring,N15_M07_F10
