@@ -1,110 +1,124 @@
 # Bearing Fault Detection
 
-This repository is a starter project for building a bearing fault detection pipeline using vibration and condition-monitoring data. It is structured as a Python-based machine learning project and includes a basic project scaffold, dependency configuration, and a metadata registry for recordings.
+## Project objective
 
-## Project overview
+Build an offline machine-learning pipeline that classifies bearing vibration recordings as healthy or faulty.
 
-The goal of the project is to detect and classify bearing faults from sensor data, typically by analyzing vibration signals and training a model to distinguish healthy and faulty operating conditions.
+## Intended use
 
-This repository currently provides the starting foundation for that workflow:
+An educational condition-monitoring prototype that demonstrates signal processing, mechanically interpretable features and evaluation on separate recordings and bearings.
 
-- Python project configuration with dependency management
-- Jupyter-ready environment for exploratory analysis
-- Scientific Python stack for signal processing and modeling
-- Metadata registry for recording-level tracking
-- Simple starter script entry point
+## Inputs
 
-## Repository structure
+- Bearing vibration samples.
+- Verified sampling rate and measurement units, with unresolved metadata explicitly flagged.
+- Sensor channel, recording identity and bearing identity.
+- Operating speed and load, when available.
 
-```text
-.
-├── README.md
-├── main.py
-├── pyproject.toml
-├── requirements.txt
-├── metadata/
-│   └── recording_registry.csv
-└── .venv/
-```
+The initial model uses vibration only.
 
-## Requirements
+## Outputs
 
-- Python 3.11+
-- pip or uv for dependency installation
+- Healthy or faulty prediction for each analysis window.
+- Feature values supporting investigation.
+- Evaluation results grouped by recording and operating condition.
 
-## Setup
+## Initial approach
 
-### Option 1: using pip
+1. Inspect raw recordings and verify metadata.
+2. Define development and final-test partitions.
+3. Apply justified preprocessing and consistent windowing.
+4. Extract time-domain, frequency-domain and envelope features.
+5. Compare an RMS-only baseline with a multi-feature model.
+6. Evaluate missed faults, false alarms and generalization.
+7. Document errors, assumptions and limitations.
 
-```bash
-python -m venv .venv
-source .venv/bin/activate    # Linux/macOS
-# or
-.venv\Scripts\activate       # Windows
-pip install -r requirements.txt
-```
+## Evaluation rules
 
-### Option 2: using the project metadata
+- Keep related recordings and repeated measurements from the same physical bearing in the same partition.
+- Windows from one recording must not cross train/test boundaries.
+- Fit scaling and feature selection using training data only, separately within each validation fold.
+- Keep final-test data out of exploratory analysis, preprocessing decisions and model tuning.
+- Report bearing counts and recording counts as well as window counts.
+- Report accuracy, balanced accuracy, fault recall, false alarms and missed faults.
+- Do not treat multiple windows from one recording as independent experiments.
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install .
-```
+## Out of scope
 
-## Run the project
+- Remaining useful life prediction.
+- Fault severity estimation.
+- Hardware deployment.
+- Claims of industrial reliability without independent validation.
 
-The current starter entry point is defined in `main.py` and simply prints a welcome message:
+# Paderborn Data Inspection
 
-```bash
-python main.py
-```
+## Purpose
 
-## Dependencies
+Inspect one K001 development recording to understand its MATLAB structure, identify the vibration channel and verify available metadata.
 
-The project includes common scientific and ML libraries:
+No filtering, resampling or feature extraction is performed at this stage.
 
-- NumPy
-- pandas
-- SciPy
-- Matplotlib
-- scikit-learn
-- JupyterLab
-- IPython kernel
-- pytest
+## Recording details
 
-## Metadata
+- File: `N15_M07_F10_K001_1.mat`.
+- Bearing identity: `K001`.
+- Condition: healthy, according to dataset documentation.
+- Selected channel: `vibration_1`.
+- Other available channels: force, two phase currents, speed, bearing-module temperature and torque.
+- Physical measurement units: unverified because the stored unit field is empty.
+- Plot amplitude label: recorded units.
 
-The `metadata/recording_registry.csv` file is intended to store recording-level metadata, such as:
+## MATLAB structure
 
-- recording ID
-- source file name
-- dataset source
-- URL or reference
-- channel/key information
-- sampling rate
-- operating condition
-- fault location
-- fault diameter
-- load and RPM values
-- units and metadata source
+- `Info`: recording identification and file information.
+- `Y`: measurement channels and their metadata.
+- `X`: axes referenced by the measurement channels.
+- `Description`: additional experiment information.
 
-This makes it easier to organize experiments and keep track of training data provenance.
+For the vibration channel:
 
-## Suggested next steps
+- `Data` contains the vibration samples.
+- `XIndex = 2` references the second entry in `X`, accessed at Python position `1`.
+- `Raster = HostService` identifies its acquisition sampling group.
+- `t_stored` preserves the original time values.
+- `x` contains the extracted vibration values.
 
-A typical bearing fault detection workflow would include:
+## Timing inspection
 
-1. Collecting and labeling vibration data
-2. Preprocessing signals and extracting features
-3. Training and validating ML models
-4. Evaluating performance on fault classes
-5. Packaging the trained model for inference
+- Sample count: 256,001.
+- Nominal sampling rate: 64,000 Hz.
+- Nominal sampling interval: 15.625 microseconds.
+- Stored time-axis span: approximately 4 seconds.
+- Sampling rate calculated from the complete axis span: 64,000.0205 Hz.
+- Maximum deviation from the nominal grid: 1.374 microseconds.
+- Individual stored increments vary; their cause is not established.
 
-## License
+Analysis will use the nominal 64 kHz grid while preserving the original time axis.
 
-This project does not currently declare a license. If you intend to share or distribute it publicly, add an appropriate license file and update this section.
+Creating nominal time coordinates does not change or resample the vibration samples.
 
-## Notes
+The rate check uses:
 
-This repository is currently a clean starting scaffold. You can expand it with notebooks, preprocessing scripts, model training code, and evaluation pipelines as the project grows.
+    fs_check = (N - 1) / time_span
+
+N samples contain N - 1 intervals between the first and last sample.
+
+## Data-quality checks
+
+All checks passed:
+
+- Vibration and time arrays have matching lengths.
+- All vibration values are finite.
+- All stored time values are finite.
+- Stored time increases throughout the recording.
+
+These checks do not rule out every acquisition problem or establish that clipping is absent.
+
+## Initial visual observations
+
+- Overall amplitude spread appears broadly consistent throughout the four-second recording.
+- The signal fluctuates around zero without a large visually apparent constant offset.
+- A 50-millisecond detail reveals recurring bursts of oscillation separated by quieter intervals.
+- No obvious clipping or long flat dropout is visible in the inspected plots.
+- The source of the recurring bursts remains unidentified.
+- The healthy label comes from dataset documentation, not visual appearance.

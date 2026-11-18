@@ -1,0 +1,6 @@
+# Python virtual environments
+.venv/
+venv/
+
+# Datasets and generated feature tables
+data/
