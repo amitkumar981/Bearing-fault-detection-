@@ -122,3 +122,46 @@ These checks do not rule out every acquisition problem or establish that clippin
 - No obvious clipping or long flat dropout is visible in the inspected plots.
 - The source of the recurring bursts remains unidentified.
 - The healthy label comes from dataset documentation, not visual appearance.
+
+## Dataset inventory
+
+The recording registry contains 560 recordings from seven physical bearings.
+Each bearing has 80 recordings: 20 repetitions under four operating conditions.
+
+Only vibration will be used as model input.
+
+## Fixed partition plan
+
+| Bearing | Condition | Partition | Recordings |
+|---|---|---|---:|
+| K001 | Healthy | Development | 80 |
+| K002 | Healthy | Development | 80 |
+| KA04 | Faulty — outer-ring damage | Development | 80 |
+| KI04 | Faulty — inner-ring damage | Development | 80 |
+| K003 | Healthy | Final test | 80 |
+| KA15 | Faulty — outer-ring damage | Final test | 80 |
+| KI14 | Faulty — inner-ring damage | Final test | 80 |
+
+Development: 320 recordings from four bearings.
+Final test: 240 recordings from three bearings.
+
+## Registry checks
+
+- No missing values in the current registry fields.
+- No duplicate recording IDs.
+- Every bearing belongs to exactly one partition.
+- Registry saved to metadata/recording_registry.csv.
+
+## Evaluation boundaries
+
+- Keep all windows and recordings from each bearing together.
+- Use development bearings for exploration and model selection.
+- Keep final-test signals out of preprocessing decisions and feature selection.
+- Three final-test bearings provide limited evidence of generalization.
+
+## Remaining metadata work
+
+- Verify sampling rates and vibration-channel availability across recordings.
+- Resolve physical measurement units and calibration where possible.
+- Verify physical values represented by the operating-condition codes.
+- Record sources and unresolved assumptions.
