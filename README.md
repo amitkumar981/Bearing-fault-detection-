@@ -165,3 +165,40 @@ Final test: 240 recordings from three bearings.
 - Resolve physical measurement units and calibration where possible.
 - Verify physical values represented by the operating-condition codes.
 - Record sources and unresolved assumptions.
+
+## Data-preparation findings
+
+- Registered 560 recordings from seven physical bearings.
+- Development: 320 recordings from K001, K002, KA04 and KI04.
+- Final test: 240 recordings from K003, KA15 and KI14.
+- Bearing identities do not cross partition boundaries.
+- All referenced recording files were found.
+- All recordings have matching vibration and time-array lengths.
+- All vibration and time values are finite.
+- All stored time axes increase strictly.
+- Channel and axis raster names match in every recording.
+- Operating-condition codes were mapped to documented physical settings.
+
+## Timing limitations
+
+The documented nominal vibration sampling rate is 64,000 Hz.
+
+Using a provisional 0.1% full-span rate-difference threshold:
+- 481 recordings are within the screening tolerance.
+- 79 recordings require timing review.
+
+Passing this screening does not establish uniform timestamp spacing.
+The cause of the discrepancies remains unresolved.
+
+No samples have been trimmed, resampled or automatically excluded.
+
+## Measurement units
+
+Physical vibration amplitude units remain unverified.
+Use "recorded units" until calibration and units are established.
+
+## Saved outputs
+
+- metadata/recording_registry.csv
+- metadata/timing_audit.csv
+- metadata/quality_audit.csv
