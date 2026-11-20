@@ -202,3 +202,35 @@ Use "recorded units" until calibration and units are established.
 - metadata/recording_registry.csv
 - metadata/timing_audit.csv
 - metadata/quality_audit.csv
+
+## Provisional timing-handling policy
+
+The documented nominal sampling rate is 64,000 Hz.
+
+Recordings whose axis-derived rate differs from nominal by more than
+0.1% are held from the initial frequency-based analysis.
+
+This is a provisional screening rule, not a verified acquisition
+tolerance or proof of file corruption.
+
+The same eligibility rule applies to every partition. Original bearing
+partitions remain unchanged.
+
+### Development selection
+
+- Original development recordings: 320.
+- Held for timing review: 48.
+- Provisionally selected: 272.
+- Healthy recordings selected: 133.
+- Faulty recordings selected: 139.
+
+All four development bearings remain represented.
+
+### Limitations
+
+- Passing the full-span check does not prove uniform timestamp spacing.
+- The cause of the timing discrepancies remains unresolved.
+- Physical vibration amplitude units remain unverified.
+- No samples have been trimmed, repaired or resampled.
+- All 560 recordings remain in the master registry.
+- Future evaluation must report coverage and held recordings.
