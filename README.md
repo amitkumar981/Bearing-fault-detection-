@@ -234,3 +234,203 @@ All four development bearings remain represented.
 - No samples have been trimmed, repaired or resampled.
 - All 560 recordings remain in the master registry.
 - Future evaluation must report coverage and held recordings.
+
+## Analysis summary and decisions
+
+### Objective
+
+Explore the development vibration recordings before choosing
+preprocessing steps, filter bands and features.
+
+The analysis examined:
+- Raw vibration waveforms.
+- FFT amplitude spectra.
+- Welch power spectral density.
+- Spectrograms.
+- Variation across repetitions and operating settings.
+
+### Data used
+
+Only development bearings were included:
+
+| Bearing | Condition | Eligible recordings |
+|---|---|---:|
+| K001 | Healthy | 58 |
+| K002 | Healthy | 75 |
+| KA04 | Faulty | 72 |
+| KI04 | Faulty | 67 |
+| **Total** | | **272** |
+
+The existing timing-screening rule held 48 of the 320 development
+recordings for further review.
+
+The final-test bearings were excluded from exploratory analysis.
+
+### Sampling and measurement assumptions
+
+- Channel: vibration_1.
+- Documented nominal sampling rate: 64,000 Hz.
+- Frequency and nominal time axes use this rate provisionally.
+- Original stored timestamps and raw files remain unchanged.
+- Passing the timing screen does not establish perfectly uniform sampling.
+- Physical amplitude units and calibration remain unverified.
+- Amplitudes are therefore reported in recorded units.
+
+## What each analysis contributed
+
+| Method | Purpose |
+|---|---|
+| Full-record waveform | Inspect overall amplitude, offsets and large events. |
+| Waveform zoom | Examine short bursts and oscillations hidden in the full view. |
+| FFT amplitude spectrum | Locate individual frequency components and spectral clusters. |
+| Welch PSD | Estimate how mean-square vibration is distributed across frequency. |
+| Spectrogram | Examine when particular frequency regions become stronger or weaker. |
+| Median PSD and percentile range | Check whether spectral patterns recur across recordings. |
+
+### Raw waveform inspection
+
+Four examples were selected at N15_M07_F10:
+one eligible recording per development bearing, using the first
+eligible repetition in numerical order.
+
+Full recordings and matching 1.00–1.05 second intervals were plotted
+with shared amplitude scales.
+
+Healthy recordings also contained bursts and large peaks.
+Waveform appearance or maximum amplitude alone was insufficient
+to establish bearing condition.
+
+Separate recordings were not synchronized to shaft angle.
+
+### FFT method
+
+For each recording:
+
+1. Remove the recording mean.
+2. Apply a periodic Hann window.
+3. Calculate the real-valued FFT.
+4. Construct the matching frequency axis.
+5. Normalize FFT magnitudes by the window sum.
+6. Double positive-frequency amplitudes, excluding DC and
+   the Nyquist bin when present.
+
+The Hann window reduces distant spectral leakage but broadens peaks.
+
+The resulting spectrum provides peak-amplitude estimates,
+not power spectral density. Estimates can be affected by
+off-bin frequencies, overlapping components and broadband content.
+
+For N15_M07_F10_K001_1:
+
+- Samples: 256,001.
+- FFT bin spacing: approximately 0.25 Hz.
+- Strongest non-DC FFT bin: 7,747.72 Hz.
+- Peak-amplitude estimate: 0.022688 recorded units.
+
+This peak was observed in a healthy recording and was not
+interpreted as a fault frequency.
+
+### Welch PSD settings
+
+| Parameter | Value | Reason |
+|---|---|---|
+| Segment length | 8,192 samples | Initial balance between spectral detail and averaging. |
+| Segment duration | 128 ms | Derived from the nominal 64 kHz rate. |
+| Overlap | 4,096 samples | Uses 50% overlap with the Hann window. |
+| Window | Hann | Reduces distant spectral leakage. |
+| Detrending | Constant | Removes each segment's mean. |
+| Scaling | Density | Produces recorded units²/Hz. |
+
+Frequency-bin spacing was 7.8125 Hz.
+Actual frequency resolution also depends on the window.
+
+PSD was displayed on a logarithmic vertical axis.
+Band power must be calculated from the linear PSD values.
+
+### Spectrogram settings
+
+The spectrogram used the same segment length, overlap, window,
+detrending and PSD scaling as Welch.
+
+Welch averages segment PSDs; the spectrogram retains them
+separately over time.
+
+- Segment duration: 128 ms.
+- Time between segment centres: 64 ms.
+- Displayed frequency region for detailed comparison: 0–12 kHz.
+- Shared colour limits: −80 to −35 dB.
+- Reference: 1 recorded unit²/Hz.
+- A small numerical floor avoided log10(0).
+
+The frequency and colour limits changed only the display.
+They did not filter or remove signal content.
+
+Values outside the colour limits received endpoint colours.
+
+Horizontal bands persisted across much of the example recordings,
+with changes in brightness. This did not prove stationarity.
+
+These settings could not precisely locate individual
+millisecond-scale impacts.
+
+## Repeatability and operating-condition comparisons
+
+A separate Welch PSD was calculated for each eligible recording.
+
+At each frequency, the median and 25th–75th percentile range
+summarized variation within each bearing and operating setting.
+
+The shaded range represented the middle 50% of recording PSDs.
+It was not a confidence interval or the full range.
+
+| Setting | K001 | K002 | KA04 | KI04 |
+|---|---:|---:|---:|---:|
+| N09_M07_F10 | 16 | 18 | 19 | 16 |
+| N15_M01_F10 | 16 | 18 | 17 | 19 |
+| N15_M07_F04 | 10 | 20 | 18 | 15 |
+| N15_M07_F10 | 16 | 19 | 18 | 17 |
+
+Documented operating settings:
+
+| Setting | Speed | Torque | Radial force |
+|---|---:|---:|---:|
+| N09_M07_F10 | 900 rpm | 0.7 Nm | 1,000 N |
+| N15_M01_F10 | 1,500 rpm | 0.1 Nm | 1,000 N |
+| N15_M07_F04 | 1,500 rpm | 0.7 Nm | 400 N |
+| N15_M07_F10 | 1,500 rpm | 0.7 Nm | 1,000 N |
+
+These were documented settings, not measured channel values.
+
+## Main observations
+
+1. Healthy bearings K001 and K002 had noticeably different spectra.
+2. Strong individual peaks occurred in healthy recordings.
+3. Several recordings shared broad spectral regions near
+   approximately 3–4, 6, 8 and 10 kHz.
+4. KA04 showed pronounced low-frequency content and strong
+   spectral clusters below approximately 11 kHz.
+5. Many spectral patterns recurred across repetitions.
+6. Spectral strength and shape changed with operating settings.
+7. The high-frequency background differed between bearings and
+   remained broadly repeatable. Its physical source was unresolved.
+
+Observations were visual and exploratory. Numerical band-power
+measurements are needed to quantify differences.
+
+## Implications for the project
+
+- Use several complementary features rather than assuming
+  maximum amplitude alone identifies faults.
+- Preserve operating-setting metadata for later evaluation.
+- Investigate background-level differences as possible measurement
+  or bearing-specific effects.
+- Treat observed frequency regions as candidates for investigation,
+  not confirmed fault bands.
+- Retain bearing-separated evaluation to assess generalization.
+
+The 272 recordings represent repeated measurements of only
+four physical development bearings.
+
+Results apply to the provisionally timing-screened subset.
+Unequal exclusions may affect which recordings are represented.
+
