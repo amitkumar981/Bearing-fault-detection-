@@ -1,0 +1,5 @@
+speed_code,torq_code,force_code,Healthy windows,Fault windows,False alarms,Missed faults,False alarm (%),Fault recall (%)
+N09,M07,F10,71,76,65,76,91.54929577464789,0.0
+N15,M01,F10,72,67,21,67,29.166666666666668,0.0
+N15,M07,F04,79,72,49,0,62.0253164556962,100.0
+N15,M07,F10,76,72,13,0,17.105263157894736,100.0
