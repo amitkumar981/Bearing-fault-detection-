@@ -7,3 +7,4 @@ jupyterlab
 ipykernel
 pytest
 xgboost
+dvc
