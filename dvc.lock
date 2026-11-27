@@ -1,0 +1,35 @@
+schema: '2.0'
+stages:
+  data_loading:
+    cmd: python src/bearing_fault_detection/data.py
+    deps:
+    - path: data/raw/paderborn
+      hash: md5
+      md5: 7a81369fdabc3b8432892d4c52edaf99.dir
+      size: 4879850488
+      nfiles: 574
+    - path: logging_config.py
+      hash: md5
+      md5: b6ee3dfdc4fe2695eb536c4bfae9a232
+      size: 1387
+    - path: metadata/recording_registry.csv
+      hash: md5
+      md5: e862268494f8f8b8e2ff4d25a70f132c
+      size: 143187
+    - path: pyproject.toml
+      hash: md5
+      md5: 013df8ddfcb3bc1a273a63f2c113590d
+      size: 447
+    - path: requirements.txt
+      hash: md5
+      md5: f2b475557c977550348ad457b4718053
+      size: 91
+    - path: src/bearing_fault_detection/data.py
+      hash: md5
+      md5: c9255f84357fc26c75033cb80b7a81cd
+      size: 2055
+    outs:
+    - path: data/interim/development_recordings.csv
+      hash: md5
+      md5: 681b29c9514ef2e91400dbb55bed8a2a
+      size: 70341

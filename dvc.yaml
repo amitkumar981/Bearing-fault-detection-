@@ -1,0 +1,12 @@
+stages:
+  data_loading:
+    cmd: python src/bearing_fault_detection/data.py
+    deps:
+      - src/bearing_fault_detection/data.py
+      - logging_config.py
+      - pyproject.toml
+      - requirements.txt
+      - metadata/recording_registry.csv
+      - data/raw/paderborn
+    outs:
+      - data/interim/development_recordings.csv

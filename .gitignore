@@ -5,3 +5,4 @@ venv/
 # Datasets and generated feature tables
 data/
 __pycache__/
+logs/
