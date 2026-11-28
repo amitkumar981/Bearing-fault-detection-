@@ -6,7 +6,33 @@ stages:
       - logging_config.py
       - pyproject.toml
       - requirements.txt
-      - metadata/recording_registry.csv
-      - data/raw/paderborn
+      - ${paths.recording_registry}
+      - ${paths.raw_data}
+    params:
+      - data
+      - paths.recording_registry
+      - paths.raw_data
+      - paths.development_registry
     outs:
-      - data/interim/development_recordings.csv
+      - ${paths.development_registry}
+
+  preprocessing:
+    cmd: python src/bearing_fault_detection/preprocessing.py
+    deps:
+      - src/bearing_fault_detection/preprocessing.py
+      - src/bearing_fault_detection/data.py
+      - logging_config.py
+      - pyproject.toml
+      - requirements.txt
+      - ${paths.development_registry}
+      - ${paths.raw_data}
+    params:
+      - data.channel
+      - preprocessing
+      - paths.development_registry
+      - paths.raw_data
+      - paths.windows
+      - paths.window_registry
+    outs:
+      - ${paths.windows}
+      - ${paths.window_registry}

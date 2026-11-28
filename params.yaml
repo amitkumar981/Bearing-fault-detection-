@@ -1,0 +1,15 @@
+paths:
+  raw_data: data/raw/paderborn
+  recording_registry: metadata/recording_registry.csv
+  development_registry: data/interim/development_recordings.csv
+  windows: data/interim/preprocessed_windows
+  window_registry: metadata/preprocessed_window_registry.csv
+
+data:
+  partition: development
+  channel: vibration_1
+
+preprocessing:
+  fs_hz: 64000
+  window_seconds: 1.0
+  remove_mean: true

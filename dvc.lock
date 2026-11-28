@@ -26,10 +26,71 @@ stages:
       size: 91
     - path: src/bearing_fault_detection/data.py
       hash: md5
-      md5: c9255f84357fc26c75033cb80b7a81cd
-      size: 2055
+      md5: 5e6932d6f864a8e0a5199331f9c15753
+      size: 2356
+    params:
+      params.yaml:
+        data:
+          partition: development
+          channel: vibration_1
+        paths.development_registry: data/interim/development_recordings.csv
+        paths.raw_data: data/raw/paderborn
+        paths.recording_registry: metadata/recording_registry.csv
     outs:
     - path: data/interim/development_recordings.csv
       hash: md5
       md5: 681b29c9514ef2e91400dbb55bed8a2a
       size: 70341
+  preprocessing:
+    cmd: python src/bearing_fault_detection/preprocessing.py
+    deps:
+    - path: data/interim/development_recordings.csv
+      hash: md5
+      md5: 681b29c9514ef2e91400dbb55bed8a2a
+      size: 70341
+    - path: data/raw/paderborn
+      hash: md5
+      md5: 7a81369fdabc3b8432892d4c52edaf99.dir
+      size: 4879850488
+      nfiles: 574
+    - path: logging_config.py
+      hash: md5
+      md5: b6ee3dfdc4fe2695eb536c4bfae9a232
+      size: 1387
+    - path: pyproject.toml
+      hash: md5
+      md5: 013df8ddfcb3bc1a273a63f2c113590d
+      size: 447
+    - path: requirements.txt
+      hash: md5
+      md5: f2b475557c977550348ad457b4718053
+      size: 91
+    - path: src/bearing_fault_detection/data.py
+      hash: md5
+      md5: 5e6932d6f864a8e0a5199331f9c15753
+      size: 2356
+    - path: src/bearing_fault_detection/preprocessing.py
+      hash: md5
+      md5: adad162172a8be2073e8e9e4dbf19e0b
+      size: 3839
+    params:
+      params.yaml:
+        data.channel: vibration_1
+        paths.development_registry: data/interim/development_recordings.csv
+        paths.raw_data: data/raw/paderborn
+        paths.window_registry: metadata/preprocessed_window_registry.csv
+        paths.windows: data/interim/preprocessed_windows
+        preprocessing:
+          fs_hz: 64000
+          window_seconds: 1.0
+          remove_mean: true
+    outs:
+    - path: data/interim/preprocessed_windows
+      hash: md5
+      md5: 2eda25c57961069641cc682ea5873a54.dir
+      size: 555554816
+      nfiles: 272
+    - path: metadata/preprocessed_window_registry.csv
+      hash: md5
+      md5: d109976d90c7dea6eebac42dc1b686a5
+      size: 372548

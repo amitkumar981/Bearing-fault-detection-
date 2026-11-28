@@ -3,12 +3,13 @@ import logging
 import sys
 import numpy as np
 import pandas as pd
+import yaml
 from scipy.io import loadmat
 
 logger = logging.getLogger("bearing_fault_detection.data")
 
 
-def load_signal(path):
+def load_signal(path, channel="vibration_1"):
     path = Path(path)
     logger.info("Loading recording: %s", path.name)
 
@@ -18,10 +19,10 @@ def load_signal(path):
         names = [channel["Name"].item() for channel in channels]
         logger.info("Available channels: %s", names)
 
-        if names.count("vibration_1") != 1:
-            raise ValueError(f"Expected one vibration channel: {path.name}")
+        if names.count(channel) != 1:
+            raise ValueError(f"Expected one {channel} channel: {path.name}")
 
-        x = channels[names.index("vibration_1")]["Data"].ravel().astype(float)
+        x = channels[names.index(channel)]["Data"].ravel().astype(float)
 
         if x.size < 2 or not np.isfinite(x).all():
             raise ValueError(f"Invalid vibration samples: {path.name}")
@@ -40,9 +41,14 @@ if __name__ == "__main__":
     from logging_config import setup_logging
 
     setup_logging(project)
-    registry = pd.read_csv(project / "metadata/recording_registry.csv")
+    with (project / "params.yaml").open(encoding="utf-8") as file:
+        params = yaml.safe_load(file)
+    paths, data = params["paths"], params["data"]
+    if data["partition"] != "development":
+        raise ValueError("This pipeline is for development bearings only.")
+    registry = pd.read_csv(project / paths["recording_registry"])
     development = registry[
-        registry["partition"].eq("development")
+        registry["partition"].eq(data["partition"])
         & registry["eligible_for_analysis"].eq(True)
     ]
     logger.info("Eligible development recordings: %d", len(development))
@@ -52,10 +58,10 @@ if __name__ == "__main__":
         raise ValueError("No eligible development recordings found.")
 
     record = development.iloc[0]
-    path = project / "data/raw/paderborn" / record["relative_path"]
-    x = load_signal(path)
+    path = project / paths["raw_data"] / record["relative_path"]
+    x = load_signal(path, data["channel"])
 
-    output = project / "data/interim/development_recordings.csv"
+    output = project / paths["development_registry"]
     output.parent.mkdir(parents=True, exist_ok=True)
     development.to_csv(output, index=False)
     logger.info("Saved development registry: %s", output)
